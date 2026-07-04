@@ -25,8 +25,15 @@ def has_cycle1(graph: nx.DiGraph)->bool:
     >>> has_cycle1(WeightedDiGraph([0,1,0.55],[1,2,0.66],[2,0,0.77]))
     True
     """
-    # Your code here
-    pass
+    # product of weights < 1  <=>  sum of log(weights) < 0,
+    # so this is exactly a negative-cycle search on the log-weights.
+    if graph.number_of_edges() == 0:
+        return False
+    log_graph = nx.DiGraph(
+        (u, v, {"weight": np.log(d["weight"])})
+        for u, v, d in graph.edges(data=True)
+    )
+    return nx.negative_edge_cycle(log_graph)
 
 
 if __name__ == '__main__':
